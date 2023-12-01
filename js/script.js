@@ -73,20 +73,21 @@ let pstNumArr=  [{idx:1,name:'A',time:'20:39'},
                     }
                 },60)
             }
-        
+            var a = [];
 // $("ul.letters li").css("float", "none").css("position", "absolute");
 function toRunSortRank(socArr,isTime){
        
     $(this).addClass('aniFont')
     var c = positions.slice(0);
     // console.log("background: #333;as",c)
-    
-    var a = [];
+  
+   
 
      a =socArr? socketRank(socArr,positions):fisherYates(c);
     
     // console.log("sssdfff;",a,socArr)
     $("ul.letters li").each(function(i) {
+        $('.ranks'+(socArr[i]-1)).stop()
         console.log(" $(this).attr('data-origin'),;",i,socArr,socArr[i],positions,positions[socArr[i]-1],socArr[i])
         let rNo = $(this).attr('data-origin')
         $(this).find('.rank_label').removeClass('aniFont')
@@ -103,7 +104,7 @@ function toRunSortRank(socArr,isTime){
             $(this).find('.rank_label').eq(1).text(socArr.data).show().addClass('aniFont')
             return
         }
-        
+        a.splice(0, 1) 
         // $(this).find('.rank_label').eq(0).show().addClass('aniFont')
         // $(this).find('.rank_label').append(positions[socArr[i]])
        
@@ -120,7 +121,7 @@ function toRunSortRank(socArr,isTime){
     //     animate(document.getElementsByClassName("rank_label")[re-1],{top: ((positions[i]))},()=>{
 
     //     })
-        a.splice(0, 1) 
+     
     })
    
     
@@ -246,6 +247,7 @@ Socket1 = $.websocket({
      },
      onError:function(event){
         //  alert("发生了错误,onError可省略不写");
+        console.log("  reconnect();",event)
          reconnect();//断开重连
      },
      onSend:function(msg){
@@ -258,6 +260,10 @@ Socket1 = $.websocket({
           
              //用来处理正常的聊天室消息
          }
+     },
+     onClose:function(e){
+        console.log("close",e)
+        reconnect();//断开重连
      },
      onMessage:function(result,nTime){
      //我这用result == 'pong'有个大大大的前提，就是ping给后台的时候，后台是直接推送pong回来给我的，所以我这里可以直接的判断result == 'pong'
