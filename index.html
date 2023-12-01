@@ -1,0 +1,146 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+    <title>rank</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+    <!-- <h1>排名</h1> -->
+    <div class="box flex-box">
+        <!-- <div class="boxbic letters-wrapper1">
+            <ul class="letters1" style="height: auto;">
+            </ul>
+        </div> -->
+        <div class="boxbic letters-wrapper">
+            
+            <ul class="letters" style="height: auto;">
+            </ul>
+        </div>
+    </div>
+  
+    <!-- <p><a id="shuffle" class="btn">开始排名</a>
+        <a id="restore" class="btn">重置</a></p> -->
+    <!-- <p id="output"></p> -->
+    
+     <script src="./js/jquery.min.js"></script>
+     <script src="./js/socket.js"></script>
+    <script src="./js/script.js"></script>
+    
+</body>
+<style>
+    #shuffle{
+        /* margin-right: 20px;  */
+    }
+    .letters-wrapper{
+        /* margin-left: 190px; */
+    }
+    
+.letters-wrapper,.letters-wrapper1 {
+    position: relative
+}
+.letters1{
+ width: 40px;
+}
+.letters {
+    width: 400px;padding: 0;margin: 0;
+}
+.list-item {
+    height: 52px;
+    list-style: none;
+    margin-bottom: 8px;
+   
+}
+.rank_label{
+    position: absolute;
+   margin-left: 10px;
+   left: 60px;
+   padding:0;
+   width: auto !important;
+   /* height: 50px !important; */
+}
+img{
+    /* width: 28px !important; */
+    height: 52px !important;
+}
+.rank_label.time {
+    background: url(./img/rankBg.png) no-repeat 100% 100%;
+    background-size: 100%;
+    
+    -webkit-background-size: 100%;
+}
+.rank_label.time{
+    display: none;
+    left: 198px;
+    width: 250px !important;
+    height: auto;
+    color: #fff;
+    /* padding: 9px 10px 11px 10px; */
+    height: 52px;
+}
+.rank_idx {
+    /* background: url(./img/rankBg.png) no-repeat 100% 100%; */
+    background-size: 100%;
+    -webkit-background-size: 100%;
+    /* padding: 9px 10px 11px 10px; */
+}
+.aniFont >div{
+
+    margin:0 auto;
+    /* opacity: 0; */
+    animation: fontAni .3s .6s linear;
+}
+
+
+.list-item >div{
+    font-weight: 700;
+    display: block;
+    /* float: left; */
+   line-height: 52px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #fff;
+    height: 32px;
+    float: left;
+    margin: 0 5px 0 0; 
+    width: 32px;
+    /* border: 1px solid #a78f5e; */
+    /* background: rgba(0 ,0 ,0,.7); */
+    border-radius: 10px;
+    font-size: 45px;
+
+    /* background: -moz-linear-gradient(top,rgba(235 ,209 ,154,.6) 0,rgba(227 ,192 ,131,.6) 100%);
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,rgba(235 ,209 ,154,.6)),color-stop(100%,rgba(227 ,192 ,131,.6)));
+    background: -webkit-linear-gradient(top,rgba(235 ,209 ,154,.6) 0,rgba(227 ,192 ,131,.6) 100%);
+    background: -o-linear-gradient(top,rgba(235 ,209 ,154,.6) 0,rgba(227 ,192 ,131,.6) 100%);
+    background: -ms-linear-gradient(top,rgba(235 ,209 ,154,.6) 0,rgba(227 ,192 ,131,.6) 100%);
+    background: linear-gradient(to bottom,rgba(235 ,209 ,154,.6) 0,rgba(227 ,192 ,131,.6) 100%);
+    -webkit-box-shadow: 1px 4px 7px rgba(0,0,0,0.2);
+    -moz-box-shadow: 1px 4px 7px rgba(0,0,0,0.2);
+    box-shadow: 1px 4px 7px rgba(0,0,0,0.2);
+    text-shadow: 0 0 8px #f5deaf; */
+}
+.letters li >div.time{
+    width: auto;
+}
+.btn {
+    display: inline-block;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 2px;
+    border: 1px solid #0e7580;
+    background: #18a2ae;
+    background: -moz-linear-gradient(top,#00c0d1 0,#18a2ae 100%);
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#00c0d1),color-stop(100%,#18a2ae));
+    background: -webkit-linear-gradient(top,#00c0d1 0,#18a2ae 100%);
+    background: -o-linear-gradient(top,#00c0d1 0,#18a2ae 100%);
+    background: -ms-linear-gradient(top,#00c0d1 0,#18a2ae 100%);
+    background: linear-gradient(to bottom,#00c0d1 0,#18a2ae 100%)
+}
+</style>
+</html>
