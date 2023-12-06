@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #000;
+        }
+
+        .con {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 2;
+            transform: translateX(-50%) translateY(-50%);
+            height: 80px;
+            width: 740px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .con .card_item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .con .card_item img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="con">
+        <div class="card_item item_1" style="opacity: 0.35;transform: scale(0.8) translateY(0px);">
+            <img src="./img/大球1.png" title="主页">
+        </div>
+        <div class="card_item item_2" style="opacity: 0.35;transform: scale(0.8) translateY(0px);">
+            <a href="" target="_blank"><img src="./img/大球2.png" title="github"></a>
+        </div>
+        <div class="card_item item_3" style="opacity: 0.35;transform: scale(0.8) translateY(0px);">
+            <a href="" target="_blank"><img src="./img/大球3.png" title="gitee"></a>
+        </div>
+        <div class="card_item item_4" style="opacity: 0.35;transform: scale(0.8) translateY(0px);">
+            <a href="" target="_blank"><img src="./img/大球4.png" title="文档"></a>
+        </div>
+        <div class="card_item item_5" style="opacity: 0.35;transform: scale(0.8) translateY(0px);">
+            <a href="" target="_blank"><img src="./img/大球5.png" title="csdn"></a>
+        </div>
+        <div class="card_item item_6" style="opacity: 0.35;transform: scale(0.8) translateY(0px);">
+            <img src="./img/大球6.png" title="邮箱">
+        </div>
+    </div>
+
+    <script>
+        // 一些边界量 每次变动的量 感觉调一下可以顺畅点
+        const conLength = 7;
+        const opacityS = 0.35;
+        const opacityO = 0.51;
+        const opacityE = 0.85;
+        const scaleS = 0.8;
+        const scaleO = 0.88;
+        const scaleE = 1;
+        const topS = 0;
+        const topO = -8;
+        const topE = -20;
+
+        const TIME = 0; //间隔 
+        // const regS = /scale\((.*?=)\)/;
+        const regS = /(?<=scale\().*?(?=\))/;
+        const regT = /(?<=translateY\().*?(?=px\))/;
+
+        let oCardItem = document.querySelectorAll(".card_item");
+        let contentNum = null;
+
+        listenerCon();
+
+        // requestAnimationFrame应该也可以吧
+        setInterval(() => {
+            // 动画效果
+            animation();
+        }, TIME)
+
+        // 得到当前鼠标移入的是哪个
+        function listenerCon() {
+            oCardItem.forEach((item, index) => {
+                item.onmouseenter = function(e) {
+                    contentNum = index;
+                }
+                item.onmouseleave = function(e) {
+                    contentNum = null;
+                }
+            })
+        }
+
+        function animation() {
+            oCardItem.forEach((item, index) => {
+
+                // 获取一些需要的值
+                // 其实就是定时每次改动 opacity scale translateY 只不过每次改动都是在原基础
+                let styleText = item.style.transform || item.style.webkitTransform;
+                let opacity = Number(item.style.opacity);
+
+                let scale = Number(styleText.match(regS)[0]);
+                let newScale = scaleS;
+                let trans = Number(styleText.match(regT)[0]);
+                let newtrans = topS;
+
+                if (contentNum !== null) {
+                    // 当前的动画
+                    if (contentNum === index) {
+                        if (opacity < opacityE) {
+                            item.style.opacity = (opacity + 0.025) >= opacityE ? opacityE : (opacity + 0.025);
+                        }
+                        if (scale < scaleE || trans > topE) {
+                            newScale = (scale + 0.01) >= scaleE ? scaleE : (scale + 0.01);
+                            newtrans = (trans - 1) <= topE ? topE : (trans - 1);
+                            item.style.transform = `scale(${newScale}) translateY(${newtrans}px)`;
+                        }
+                        return;
+                    }
+                    // 左右两边的
+                    if (((contentNum >= 1) && (contentNum - 1) === index) || ((contentNum <= (conLength - 2)) && (contentNum + 1) === index)) {
+                        if (opacity > opacityO) {
+                            item.style.opacity = (opacity - 0.025) <= opacityO ? opacityO : (opacity - 0.025);
+                        } else if (opacity < opacityO) {
+                            item.style.opacity = (opacity + 0.025) >= opacityO ? opacityO : (opacity + 0.025);
+                        }
+                        if (scale < scaleO || trans > topO) {
+                            newScale = (scale + 0.01) >= scaleO ? scaleO : (scale + 0.01);
+                            newtrans = (trans - 0.5) <= topO ? topO : (trans - 0.5);
+                            item.style.transform = `scale(${newScale}) translateY(${newtrans}px)`;
+                        } else if (scale > scaleO || trans < topO) {
+                            newScale = (scale - 0.01) <= scaleO ? scaleO : (scale - 0.01);
+                            newtrans = (trans + 0.5) >= topO ? topO : (trans + 0.5);
+                            item.style.transform = `scale(${newScale}) translateY(${newtrans}px)`;
+                        }
+                        return;
+                    }
+                }
+                // 非核心或者鼠标全部不在时
+                if (opacity > opacityS) {
+                    item.style.opacity = (opacity - 0.025) <= opacityS ? opacityS : (opacity - 0.025);
+                }
+                if (scale > scaleS || trans < topS) {
+                    newScale = (scale - 0.01) <= scaleS ? scaleS : (scale - 0.01);
+                    newtrans = (trans + 1) >= topS ? topS : (trans + 1);
+                    item.style.transform = `scale(${newScale}) translateY(${newtrans}px)`;
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
+</html>

@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			/* 这是最外层的样式 */
+			.outer {
+				width: 80%;
+				margin: 20px auto;
+				background-color: #00A7DE;
+			}
+
+			/* 为按钮添加margin */
+			button {
+				margin: 5px 10px;
+			}
+
+			/* 这是动画的内容区 */
+			.space {
+				background-color: lightblue;
+				/* width: 100%; */
+				height: 500px;
+				display: flex;
+				flex-direction: row;
+				justify-content: space-around;
+				align-items: flex-end;
+
+			}
+
+			/* 这是竖条 */
+			.content {
+				background-color: red;
+				margin: 0 5px;
+
+				text-align: center;
+
+
+			}
+		</style>
+	</head>
+	<body>
+		<div class="outer">
+			<div class="menu">
+				<input type="number" name="" id="" value="" placeholder="请输入10到100之间的数" />
+				<button type="button">左侧入</button>
+				<button type="button">右侧入</button>
+				<button type="button">左侧出</button>
+				<button type="button">右侧出</button>
+				<button type="button">重新排序</button>
+				<button type="button">清空</button>
+				<button type="button">随机生成</button>
+
+
+			</div>
+
+			<div class="space">
+
+
+			</div>
+		</div>
+		<script src="jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//排序动画所在的区域
+			let space = $('.space')[0];
+			// alert(space)、
+			let input;
+
+
+
+			let btns = $('button');
+			console.log(btns);
+			//获取区域所在宽度
+			let width = $('.space')[0].offsetWidth;
+			//获取区域所在高度
+			let height = $('.space')[0].offsetHeight;
+			//定时器
+			let timer;
+
+			console.log(width + ' ' + height);
+			console.log(btns)
+
+			//左侧入
+			btns.eq(0).click(handle('left', 'insert'));
+			//右侧如
+			btns.eq(1).click(handle('right', 'insert'));
+			//左侧出
+			btns.eq(2).click(handle('left', 'delete'));
+			//右侧出
+			btns.eq(3).click(handle('right', 'delete'));
+			//排序按钮
+			btns.eq(4).click(function() {
+				sort();
+			})
+			//清空按钮
+			btns.eq(5).click(function() {
+				$('.space').empty();
+			})
+			//随机生成
+			btns.eq(6).click(function() {
+				//alert('ok')
+				$('.space').empty();
+				clearInterval(timer);
+				for (let i = 0; i < 20; i++) {
+					let div = document.createElement('div');
+					div.className = 'content';
+
+					let item_number = random();
+					let item_height = height / 100 * item_number;
+					div.innerHTML = item_number;
+
+					div.style.height = item_height + 'px';
+					div.style.width = 100 / (20) + '%';
+					space.append(div);
+				}
+
+			})
+
+			function sort() {
+				let heights = [];
+				//遍历每个竖条的高度
+				$('.content').each(function(index, item) {
+					heights.push(item.offsetHeight);
+
+
+				});
+				//这是排序的算法，将i和j放在了定时器的外面，在定时器中对i和j进行加减操作
+				let i = 0;
+				let j = 0;
+				timer = setInterval(function() {
+					if (i != heights.length - 1) {
+						//将要比较的两个竖条的颜色变成绿色
+						$('.content').eq(j).css('backgroundColor', 'lightgreen');
+						$('.content').eq(j + 1).css('backgroundColor', 'lightgreen');
+						//console.log(heights);
+						//前一个比后一个大，对高度和内容进行交换，这里对每一个竖条进行定位更改它的left值进行交换比较好，还可以添加动画效果，刚开始没考虑到动画，后面想改已经有些困难了
+						if (j != heights.length - i - 1 && heights[j] > heights[j + 1]) {
+							let temp = heights[j + 1];
+							let inner = $('.content')[j].innerHTML;
+							heights[j + 1] = heights[j];
+							heights[j] = temp;
+							//这里如果使用的是eq则是jQuery对象，如果是用数组形式取得是DOM对象
+							$('.content').eq(j).css('height', heights[j]);
+							$('.content').eq(j + 1).css('height', heights[j + 1]);
+							$('.content')[j].innerHTML = $('.content')[j + 1].innerHTML;
+							$('.content')[j + 1].innerHTML = inner;
+
+						}
+						//这里设置延时器的目的是为了将前面要选中进行比较的两个变为绿色的竖条再次恢复为红色，在前面改变颜色的是两个竖条，这里只改变第一个，因为后一个还要和下一个
+						//进行比较又要设置为绿色，索性就不改变了。
+						//还有一个要注意的点是这里改变的是第（j-1）个元素，但是前面的第一个元素的序号应该是
+						//j，按道理这里要恢复颜色的是第j个而不是第（j-1）个，这是因为延时器是异步执行的，定时器的函数执行完之后它才会执行，但是在下面定时器的回调函数
+						//会对j进行++的操作，所以当延时器执行的时候第（j-1）个才是之前设置为绿色的第一个。
+						setTimeout(function() {
+							if (j != 0)
+								$('.content').eq(j - 1).css('backgroundColor', 'red');
+
+
+						}, 100)
+						j++;
+						//这里已经排好了一个元素，将排好的设置为黄色，开始外层的第二次循环
+						if (j == heights.length - i - 1) {
+							i++;
+							$('.content').eq(j).css('backgroundColor', 'yellow');
+							//这里将前一个元素的颜色设置为红色是因为前面只恢复了选中进行比较的两个元素中的第一个，在这里已经没有下一个要比较的元素了，就将它恢复为红色
+							$('.content').eq(j - 1).css('backgroundColor', 'red');
+							j = 0;
+						}
+					} else {
+						//排序结束将剩下的第一个也变成黄色，并清除定时器
+						$('.content').eq(0).css('backgroundColor', 'yellow');
+						clearInterval(timer);
+					}
+				}, 150);
+
+
+
+
+
+
+			}
+			//对input中的内容进行判断
+			function judge(number) {
+				if (number == '') {
+					alert('请输入数字');
+					return false;
+				} else if (number < 10 || number > 100) {
+					alert('请输入10-100之间的数字');
+					return false;
+				} else {
+					return true;
+				}
+			}
+			//对内容进行左右出入的操作
+			function handle(direction, toDo) {
+
+
+				return function() {
+					console.log('success');
+					if (toDo == 'insert') {
+						let number = $('input').val();
+						if (direction == 'right') {
+
+
+							if (judge(number)) {
+								space.append(newDiv(number));
+								//每添加一个节点都要重新计算一下宽度，对所有竖条进行更新
+								updata();
+							} else {
+								return;
+							}
+
+
+						} else if (direction == 'left') {
+
+							if (judge(number)) {
+								space.prepend(newDiv(number));
+								updata();
+							} else {
+								return;
+							}
+
+						} else {
+							console.log('参数错误');
+						}
+					} else if (toDo == 'delete') {
+						if (direction == 'right') {
+							$('.space div:last').remove();
+							//删除节点也要更新所有竖条的宽度
+							updata();
+						} else if (direction == 'left') {
+							$('.space div:first').remove();
+							updata();
+						}
+					}
+				}
+
+			}
+			//生成一个新的竖条
+			function newDiv(number) {
+				let div = document.createElement('div');
+				div.innerHTML = number;
+				div.className = 'content';
+				div.style.height = parseInt(height / 100 * number) + 'px';
+
+				let contents = $('.content');
+				if (contents.length == 0 || contents.length == 1) {
+					div.style.width = '50%'
+				} else {
+					div.style.width = 100 / (contents.length + 1) + '%';
+				}
+				return div;
+
+			}
+			//更新操作
+			function updata() {
+				//console.log();
+				if ($('.content').length != 0 && $('.content').length != 1)
+					$('.content').css('width', width / $('.content').length);
+			}
+			//随机生成一个10到100之间的数
+			function random() {
+				return parseInt(Math.random() * 91 + 10);
+			}
+		</script>
+	</body>
+</html>
+
